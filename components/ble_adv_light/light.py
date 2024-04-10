@@ -21,6 +21,7 @@ bleadvlight_ns = cg.esphome_ns.namespace('bleadvlight')
 BleAdvLight = bleadvlight_ns.class_('BleAdvLight', cg.Component, light.LightOutput)
 ZhiJiaLight = bleadvlight_ns.class_('ZhiJiaLight', BleAdvLight)
 LampSmartProLight = bleadvlight_ns.class_('LampSmartProLight', BleAdvLight)
+FanLight = bleadvlight_ns.class_('FanLight', BleAdvLight)
 PairAction = bleadvlight_ns.class_("PairAction", automation.Action)
 UnpairAction = bleadvlight_ns.class_("UnpairAction", automation.Action)
 
@@ -45,7 +46,7 @@ CONFIG_SCHEMA = cv.All(
     light.RGB_LIGHT_SCHEMA.extend(
         {
             cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(BleAdvLight),
-            cv.Required(CONF_TYPE): cv.one_of("zhijia", "lampsmart_pro", lower=True),
+            cv.Required(CONF_TYPE): cv.one_of("zhijia", "lampsmart_pro", "fanlight", lower=True),
             cv.Optional(CONF_DURATION, default=100): cv.positive_int,
             cv.Optional(CONF_COLD_WHITE_COLOR_TEMPERATURE): cv.color_temperature,
             cv.Optional(CONF_WARM_WHITE_COLOR_TEMPERATURE): cv.color_temperature,
@@ -67,6 +68,8 @@ async def to_code(config):
             subclass = ZhiJiaLight.new
         case "lampsmart_pro":
             subclass = LampSmartProLight.new
+        case "fanlight":
+            subclass = FanLight.new
     var = cg.Pvariable(config[CONF_OUTPUT_ID], subclass)
     await cg.register_component(var, config)
     await light.register_light(var, config)

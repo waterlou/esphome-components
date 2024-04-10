@@ -91,6 +91,28 @@ class LampSmartProLight : public BleAdvLight
   };
 };
 
+class FanLight : public BleAdvLight
+{
+ protected:
+  void send_packet(uint8_t cmd, uint8_t *args) override;
+
+  uint8_t CMD_PAIR() override { return 0xA2; };
+  uint8_t CMD_UNPAIR() override { return 0x45; };
+  uint8_t CMD_TURN_ON() override { return 0xA5; };
+  uint8_t CMD_TURN_OFF() override { return 0xA6; };
+  uint8_t CMD_FAN_ON() override { return 0xA5; };
+  uint8_t CMD_FAN_OFF() override { return 0xA6; };
+  uint8_t CMD_DIM() override { return 0xAD; };
+  uint8_t CMD_CCT() override { return 0xAE; };
+
+  void update_channels(uint8_t cold, uint8_t warm) override {
+    uint8_t cct_args[1] = {(uint8_t) (255 * ((float) warm / (cold + warm)))};
+    uint8_t dim_args[1] = {(uint8_t) (cold + warm > 255 ? 255 : cold + warm)};
+    send_packet(CMD_CCT(), cct_args);
+    send_packet(CMD_DIM(), dim_args);
+  };
+};
+
 template<typename... Ts> class PairAction : public Action<Ts...> {
  public:
   explicit PairAction(esphome::light::LightState *state) : state_(state) {}
