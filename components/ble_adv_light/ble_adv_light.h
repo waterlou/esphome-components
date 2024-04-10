@@ -39,6 +39,8 @@ class BleAdvLight : public light::LightOutput, public Component, public EntityBa
   virtual uint8_t CMD_UNPAIR() = 0;
   virtual uint8_t CMD_TURN_ON() = 0;
   virtual uint8_t CMD_TURN_OFF() = 0;
+  virtual uint8_t CMD_FAN_ON() = 0;
+  virtual uint8_t CMD_FAN_OFF() = 0;
   virtual uint8_t CMD_DIM() = 0;
   virtual uint8_t CMD_CCT() = 0;
 
@@ -62,6 +64,8 @@ class ZhiJiaLight : public BleAdvLight
   uint8_t CMD_UNPAIR() override { return 0x45; };
   uint8_t CMD_TURN_ON() override { return 0xA5; };
   uint8_t CMD_TURN_OFF() override { return 0xA6; };
+  uint8_t CMD_FAN_ON() override { return 0xA5; };
+  uint8_t CMD_FAN_OFF() override { return 0xA6; };
   uint8_t CMD_DIM() override { return 0xAD; };
   uint8_t CMD_CCT() override { return 0xAE; };
 
@@ -82,6 +86,8 @@ class LampSmartProLight : public BleAdvLight
   uint8_t CMD_UNPAIR() override { return 0x45; };
   uint8_t CMD_TURN_ON() override { return 0x10; };
   uint8_t CMD_TURN_OFF() override { return 0x11; };
+  uint8_t CMD_FAN_ON() override { return 0xA5; };
+  uint8_t CMD_FAN_OFF() override { return 0xA6; };
   uint8_t CMD_DIM() override { return 0x21; };
   uint8_t CMD_CCT() override { return 0; };
 
