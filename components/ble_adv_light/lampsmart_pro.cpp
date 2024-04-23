@@ -8,6 +8,9 @@
 namespace esphome {
 namespace bleadvlight {
 
+void ble_whiten(uint8_t *buf, uint8_t size, uint8_t seed, uint8_t salt);
+uint16_t v2_crc16_ccitt(uint8_t *src, uint8_t size, uint16_t crc16_result);
+
 static const char *TAG = "lampsmartpro";
 
 #pragma pack(1)
@@ -62,28 +65,6 @@ static uint8_t XBOXES[128] = {
   0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68,
   0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
 };
-
-void ble_whiten(uint8_t *buf, uint8_t size, uint8_t seed, uint8_t salt) {
-  for (uint8_t i = 0; i < size; ++i) {
-    buf[i] ^= XBOXES[(seed + i + 9) & 0x1f + (salt & 0x3) * 0x20];
-    buf[i] ^= seed;
-  }
-}
-
-uint16_t v2_crc16_ccitt(uint8_t *src, uint8_t size, uint16_t crc16_result) {
-  for (uint8_t i = 0; i < size; ++i) {
-    crc16_result = crc16_result ^ (*(uint16_t*) &src[i]) << 8;
-    for (uint8_t j = 8; j != 0; --j) {
-      if ((crc16_result & 0x8000) == 0) {
-        crc16_result <<= 1;
-      } else {
-        crc16_result = crc16_result << 1 ^ 0x1021;
-      }
-    }
-  }
-
-  return crc16_result;
-}
 
 void LampSmartProLight::send_packet(uint8_t cmd, uint8_t *args) {
   uint16_t seed = (uint16_t) rand();
